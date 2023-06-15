@@ -20,4 +20,8 @@ public interface MemberDAO {
 
 	public void setMemberPwdUpdate(@Param("mid") String mid, @Param("pwd") String pwd);
 
+	public void setMemberUpdateOk(@Param("vo") MemberVO vo);
+
+	public void setMemberDeleteOk(@Param("mid") String mid);
+
 }
