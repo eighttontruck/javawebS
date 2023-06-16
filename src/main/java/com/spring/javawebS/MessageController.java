@@ -147,6 +147,14 @@ public class MessageController {
 			model.addAttribute("msg", mid+"님 회원에서 탈퇴되었습니다.\\n같은 아이디로 1달이내 재가입 하실수 없습니다.");
 			model.addAttribute("url", "/member/memberLogin");
 		}
+		else if(msgFlag.equals("boardInputOk")) {
+			model.addAttribute("msg", "게시글이 등록되었습니다.");
+			model.addAttribute("url", "/board/boardList");
+		}
+		else if(msgFlag.equals("boardInputNo")) {
+			model.addAttribute("msg", "게시글 등록실패~~");
+			model.addAttribute("url", "/board/boardInput");
+		}
 		
 		
 		

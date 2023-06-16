@@ -24,4 +24,6 @@ public interface MemberDAO {
 
 	public void setMemberDeleteOk(@Param("mid") String mid);
 
+	public int totRecCnt(@Param("mid") String mid);
+
 }
