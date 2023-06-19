@@ -27,7 +27,8 @@
     		url   : "${ctp}/board/boardGoodCheckAjax",
     		data  : {idx : ${vo.idx}},
     		success:function(res) {
-    			if(res == "0") alert("이미 좋아요 버튼을 클릭하셨습니다.");
+    			if(res == "0"
+    					) alert("이미 좋아요 버튼을 클릭하셨습니다.");
     			else location.reload();
     		},
     		error : function() {
@@ -80,7 +81,7 @@
     
     function boardDelete() {
     	let ans = confirm("현 게시글을 삭제하시겠습니까?");
-    	if(ans) location.href="${ctp}/board/boardDelete?idx=${vo.idx}&pag=${pag}&pageSize=${pageSize}&nickName=${vo.nickName}";
+    	if(ans) location.href="${ctp}/board/boardDelete?idx=${vo.idx}&pag=${pageVO.pag}&pageSize=${pageVO.pageSize}&nickName=${vo.nickName}";
     }
     
     // 댓글달기(aJax처리)
@@ -178,7 +179,7 @@
       <th>좋아요</th>
       <td>
         ${vo.good} /
-        <a href="javascript:goodCheck()">
+        <a href="javascript:goodSwitchCheck(${sGFlag})">
           <c:if test="${sSw == '1'}"><font color="#f00" size="5">♥</font></c:if>
           <c:if test="${sSw != '1'}"><font color="#000" size="5">♥</font></c:if>
         </a> /
@@ -210,13 +211,13 @@
 	    <tr>
 	      <td>
 	        <c:if test="${!empty pnVos[1]}">
-	          ☝1 <a href="${ctp}/board/boardContent?idx=${pnVos[1].idx}&pag=${pag}&pageSize=${pageSize}">다음글 : ${pnVos[1].title}</a><br/>
+	          ☝ <a href="${ctp}/board/boardContent?idx=${pnVos[1].idx}&pag=${pag}&pageSize=${pageSize}">다음글 : ${pnVos[1].title}</a><br/>
 	        </c:if>
 	        <c:if test="${vo.idx < pnVos[0].idx}">
-	        	☝2 <a href="${ctp}/board/boardContent?idx=${pnVos[0].idx}&pag=${pag}&pageSize=${pageSize}">다음글 : ${pnVos[0].title}</a><br/>
+	        	☝ <a href="${ctp}/board/boardContent?idx=${pnVos[0].idx}&pag=${pag}&pageSize=${pageSize}">다음글 : ${pnVos[0].title}</a><br/>
 	        </c:if>
 	        <c:if test="${vo.idx > pnVos[0].idx}">
-	        	👇3 <a href="${ctp}/board/boardContent?idx=${pnVos[0].idx}&pag=${pag}&pageSize=${pageSize}">이전글 : ${pnVos[0].title}</a><br/>
+	        	👇 <a href="${ctp}/board/boardContent?idx=${pnVos[0].idx}&pag=${pag}&pageSize=${pageSize}">이전글 : ${pnVos[0].title}</a><br/>
 	        </c:if>
 	      </td>
 	    </tr>
