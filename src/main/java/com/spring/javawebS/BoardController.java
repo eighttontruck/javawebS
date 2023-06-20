@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.http.UserDetailsServiceFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spring.javawebS.pagination.PageProcess;
 import com.spring.javawebS.pagination.PageVO;
 import com.spring.javawebS.service.BoardService;
+import com.spring.javawebS.vo.BoardReplyVO;
 import com.spring.javawebS.vo.BoardVO;
+import com.spring.javawebS.vo.GoodVO;
 
 @Controller
 @RequestMapping("/board")
@@ -89,19 +92,85 @@ public class BoardController {
 		// 이전글/다음글 가져오기
 		ArrayList<BoardVO> pnVos = boardService.getPrevNext(idx);
 		model.addAttribute("pnVos", pnVos);
-		
-		
-		
-		
-		
 		model.addAttribute("vo", vo);
 		model.addAttribute("pag", pag);
 		model.addAttribute("pageSize", pageSize);
 		
+		
+		// 해당글에 '좋아요' 버튼을 클릭하였었다면 '좋아요세션'에 아이디를 저장시켜두었기에 찾아서 있다면 sSw값을 1로 보내어 하트색을 빨강색으로 변경유지하게한다.(세션이 끈기면 다시 초기화 된다.)
+		ArrayList<String> goodIdx = (ArrayList) session.getAttribute("sGoodIdx");
+		if(goodIdx == null) {
+			goodIdx = new ArrayList<String>();
+		}
+		String imsiGoodIdx = "boardGood" + idx;
+		if(goodIdx.contains(imsiGoodIdx)) {
+			session.setAttribute("sSw", "1");		// 로그인 사용자가 이미 좋아요를 클릭한 게시글이라면 빨강색으로 표시가히위해 sSW에 1을 전송하고 있다.
+		}
+		else {
+			session.setAttribute("sSw", "0");
+		}
+		
+		
+		// DB에서 현재 게시글에 '좋아요'가 체크되어있는지를 알아오자.
+		String mid = (String) session.getAttribute("sMid");
+		GoodVO goodVo = boardService.getBoardGoodCheck(idx, "board", mid);
+		model.addAttribute("goodVo", goodVo);
+		
+		// 댓글 가져오기(replyVOS) : 출력할때 1차정렬이 groupId오름차순, 2차정렬이 idx 오름차순
+		List<BoardReplyVO> replyVOS = boardService.setBoardReply(idx);
+		model.addAttribute("replyVOS", replyVOS);
+		
 		return "board/boardContent";
 	}
 	
+	
+	// 좋아요수 증가처리하기
+	// 좋아요 버튼을 클릭했을때 처리(처음으로 '좋아요'누르면 1을, 이미 '좋아요'가 한번이라도 눌렸었다면 '0'을 돌려준다.
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@ResponseBody
+	@RequestMapping(value = "/boardGoodCheckAjax", method = RequestMethod.POST)
+	public String boardGoodCheckAjaxPost(HttpSession session, int idx) {
+		String res = "0"; // 처음 0으로 셋팅하고, 처음 좋아요 버튼을 누르면 '1'을 돌려준다., 이미 '좋아요'를 한번 눌렀으면 '0'으로 res값을 보내준다.
+		ArrayList<String> goodIdx = (ArrayList) session.getAttribute("sGoodIdx");
+		if(goodIdx == null) {
+			goodIdx = new ArrayList<String>();
+		}
+		String imsiGoodIdx = "boardGood" + idx;
+		if(!goodIdx.contains(imsiGoodIdx)) {
+			boardService.setBoardGoodPlus(idx);
+			goodIdx.add(imsiGoodIdx);
+			res = "1";	// 처음으로 좋아요 버튼을 클릭하였기에 '1'을 반환
+		}
+		session.setAttribute("sGoodIdx", goodIdx);
+		
+		return res;	// '좋아요'를 이미 눌렸을때 이곳으로 들어오면 처음설정값인 res는 '0'을 반환, 처음 눌렀으면 '1'을 반환~~
+	}
+	
+	// 좋아요수 Plus버튼누르면 1증가처리..Minus버튼누르면 1감소 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@ResponseBody
+	@RequestMapping(value = "/boardGoodPlusMinus", method = RequestMethod.POST)
+	public String boardGoodPlusMinusPost(HttpSession session, int idx, int goodCnt) {
+		String res = "0";
+		// 좋아요수 단 한번씩만 1회 증가/감소시키기.(중복방지처리 - 세션 사용 : 'good+(고유번호*goodCnt)'를 객체배열에 추가시킨다.)
+		ArrayList<String> goodIdx = (ArrayList) session.getAttribute("sGoodIdx");
+		if(goodIdx == null) {
+			goodIdx = new ArrayList<String>();
+		}
+		String imsiGoodIdx = "good" + (idx*goodCnt);
+		if(!goodIdx.contains(imsiGoodIdx)) {
+			boardService.setGoodPlusMinus(idx, goodCnt);	// 좋아요수 증가/감소
+			goodIdx.add(imsiGoodIdx);
+		}
+		else {
+			res = "1";
+		}
+		session.setAttribute("sGoodIdx", goodIdx);
+		return res;
+	}
+	
 	//좋아요수 증가처리하기
+	/*
 	@ResponseBody
 	@RequestMapping(value = "/boardGoodDBCheck", method = RequestMethod.POST)
 	public void boardGoodFlagCheckPost(HttpSession session, int idx, int sSw) {
@@ -109,6 +178,23 @@ public class BoardController {
 		boardService.boardGoodFlagCheck(idx, sSw);
 		session.setAttribute("sGFlag", sSw);
 	}
+	*/
+	
+	// 좋아요~ 토글 처리(DB를 활용한 예제)
+	@ResponseBody
+	@RequestMapping(value = "/boardGoodDBCheck", method=RequestMethod.POST)
+	public void boardGoodDBCheckPost(GoodVO goodVo) {
+		// 처음 '좋아요'클릭시는 무조건 레코드를 생성, 그렇지 않으면, 즉 기존에 '좋아요'레코드가 있었다면 '해당레코드를 삭제' 처리한다.
+		if(goodVo.getIdx() == 0) {
+			boardService.setGoodDBInput(goodVo);
+			boardService.setGoodUpdate(goodVo.getPartIdx(), 1);
+		}
+		else {
+			boardService.setGoodDBDelete(goodVo.getIdx());
+			boardService.setGoodUpdate(goodVo.getPartIdx(), -1);
+		}
+	}
+	
 	
 	// 게시글 검색처리
 	@RequestMapping(value = "/boardSearch", method = RequestMethod.GET)
@@ -212,6 +298,55 @@ public class BoardController {
 		else {
 			return "redirect:/message/boardUpdateNo";
 		}
-		
 	}
+	
+	// 댓글 달기...
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyInput", method = RequestMethod.POST)
+	public String boardReplyInputPost(BoardReplyVO replyVO) {
+		// 원본글의 댓글처리
+		String strGroupId = boardService.getMaxGroupId(replyVO.getBoardIdx());
+		if(strGroupId != null) replyVO.setGroupId(Integer.parseInt(strGroupId)+1);
+		else replyVO.setGroupId(0);
+		replyVO.setLevel(0);
+		
+		boardService.setBoardReplyInput(replyVO);
+		
+		return "1";
+	}
+	
+	// 댓글(대댓글) 저장하기
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyInput2", method = RequestMethod.POST)
+	public String boardReplyInput2Post(BoardReplyVO replyVO) {
+		replyVO.setLevel(replyVO.getLevel()+1);
+		boardService.setBoardReplyInput(replyVO);
+		
+		return "";
+	}
+	
+	// 댓글 삭제하기
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyDelete", method = RequestMethod.POST)
+	public String boardReplyDeletePost(
+			@RequestParam(name="replyIdx", defaultValue = "0", required=false) int replyIdx,
+			@RequestParam(name="level", defaultValue = "0", required=false) int level) {
+		BoardReplyVO replyVO = boardService.getBoardReplyIdx(replyIdx);
+		boardService.setBoardReplyDelete(replyVO.getIdx(), replyVO.getLevel(),replyVO.getGroupId(), replyVO.getBoardIdx());
+		
+		return "1";
+	}
+	
+	// 댓글 수정하기
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyUpdate", method = RequestMethod.POST)
+	public String boardReplyUpdatePost(
+			@RequestParam(name="idx", defaultValue = "0", required=false) int idx,
+			@RequestParam(name="content", defaultValue = "", required=false) String content,
+		  @RequestParam(name="hostIp", defaultValue = "", required=false) String hostIp) {
+		boardService.setBoardReplyUpdate(idx, content, hostIp);
+		
+		return "1";
+	}
+	
 }

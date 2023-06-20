@@ -16,7 +16,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.spring.javawebS.dao.BoardDAO;
+import com.spring.javawebS.vo.BoardReplyVO;
 import com.spring.javawebS.vo.BoardVO;
+import com.spring.javawebS.vo.GoodVO;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -194,6 +196,66 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int setBoardUpdate(BoardVO vo) {
 		return boardDAO.setBoardUpdate(vo);
+	}
+
+	@Override
+	public void setBoardGoodPlus(int idx) {
+		boardDAO.setBoardGoodPlus(idx);
+	}
+
+	@Override
+	public void setGoodPlusMinus(int idx, int goodCnt) {
+		boardDAO.setGoodPlusMinus(idx, goodCnt);
+	}
+
+	@Override
+	public void setGoodDBInput(GoodVO goodVo) {
+		boardDAO.setGoodDBInput(goodVo);
+	}
+
+	@Override
+	public void setGoodUpdate(int idx, int item) {
+		boardDAO.setGoodUpdate(idx, item);
+	}
+
+	@Override
+	public void setGoodDBDelete(int idx) {
+		boardDAO.setGoodDBDelete(idx);
+	}
+
+	@Override
+	public GoodVO getBoardGoodCheck(int partIdx, String part, String mid) {
+		return boardDAO.getBoardGoodCheck(partIdx, part, mid);
+	}
+
+	@Override
+	public String getMaxGroupId(int boardIdx) {
+		return boardDAO.getMaxGroupId(boardIdx);
+	}
+
+	@Override
+	public void setBoardReplyInput(BoardReplyVO replyVO) {
+		boardDAO.setBoardReplyInput(replyVO);
+	}
+
+	@Override
+	public List<BoardReplyVO> setBoardReply(int idx) {
+		return boardDAO.setBoardReply(idx);
+	}
+
+	@Override
+	public void setBoardReplyDelete(int replyIdx, int level, int groupId, int boardIdx) {
+		boardDAO.setBoardReplyDelete(replyIdx, level, groupId, boardIdx);
+	}
+
+	@Override
+	public BoardReplyVO getBoardReplyIdx(int replyIdx) {
+		return boardDAO.getBoardReplyIdx(replyIdx);
+	}
+
+	@Override
+	public void setBoardReplyUpdate(int idx, String content, String hostIp) {
+		boardDAO.setBoardReplyUpdate(idx, content, hostIp);
 	}
 	
 }
