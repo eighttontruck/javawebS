@@ -173,7 +173,7 @@
     	insReply += '</td><td>';
     	insReply += '<input type="button" value="답글달기" onclick="replyCheck2('+idx+','+groupId+','+level+')" />';
     	insReply += '</td></tr><tr><td colspan="2" class="text-center p-0">';
-    	insReply += '<textarea rows="3" class="form-control p-0" name="content" id="content'+idx+'" />';
+    	insReply += '<textarea rows="3" class="form-control p-0" name="content" id="content'+idx+'" >';
     	insReply += '@' + nickName + '\n';
     	insReply += '</textarea>';
     	insReply += '</td>';
@@ -244,7 +244,7 @@
     	insReply += '</td><td>';
     	insReply += '<input type="button" value="댓글수정" onclick="updateReply('+idx+')" />';
     	insReply += '</td></tr><tr><td colspan="2" class="text-center p-0">';
-    	insReply += '<textarea rows="3" class="form-control p-0" name="content" id="content'+idx+'" />';
+    	insReply += '<textarea rows="3" class="form-control p-0" name="content" id="content'+idx+'" >';
     	insReply += content.replaceAll("<br/>", "\n");
     	insReply += '</textarea>';
     	insReply += '</td>';
@@ -407,6 +407,8 @@
 	            <c:if test="${sMid == replyVO.mid || sLevel == 0}">
 	              (<a href="javascript:replyDelete(${replyVO.idx},${replyVO.level})" title="댓글삭제"><b>x</b></a>
 	              <c:if test="${sMid == replyVO.mid || sLevel == 0}">
+		            	<%-- ,<a href="javascript:updateReplyForm('${replyVO.idx}','${replyVO.content}')" title="댓글수정" id="replyBoxUpdateBtn${replyVO.idx}">√</a> --%>
+		            	<c:set var="content" value="${fn:replace(replyVO.content,newLine,'<br/>')}"/>
 		            	,<a href="javascript:updateReplyForm('${replyVO.idx}','${content}')" title="댓글수정" id="replyBoxUpdateBtn${replyVO.idx}">√</a>
 		            </c:if>
 	              )
