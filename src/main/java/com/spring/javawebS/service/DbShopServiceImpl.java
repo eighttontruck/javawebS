@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.javawebS.dao.DbShopDAO;
+import com.spring.javawebS.vo.DbBaesongVO;
 import com.spring.javawebS.vo.DbCartVO;
 import com.spring.javawebS.vo.DbOptionVO;
 import com.spring.javawebS.vo.DbOrderVO;
@@ -281,13 +282,43 @@ public class DbShopServiceImpl implements DbShopService {
 	}
 
 	@Override
-	public DbCartVO getCartIdx(int parseInt) {
-		return dbShopDAO.getCartIdx(parseInt);
+	public DbCartVO getCartIdx(int idx) {
+		return dbShopDAO.getCartIdx(idx);
 	}
 
 	@Override
 	public DbOrderVO getOrderMaxIdx() {
 		return dbShopDAO.getOrderMaxIdx();
+	}
+
+	@Override
+	public void setDbOrder(DbOrderVO vo) {
+		dbShopDAO.setDbOrder(vo);
+	}
+
+	@Override
+	public void setDbCartDeleteAll(int idx) {
+		dbShopDAO.setDbCartDeleteAll(idx);
+	}
+
+	@Override
+	public void setDbBaesong(DbBaesongVO baesongVO) {
+		dbShopDAO.setDbBaesong(baesongVO);
+	}
+
+	@Override
+	public void setMemberPointPlus(int point, String mid) {
+		dbShopDAO.setMemberPointPlus(point, mid);
+	}
+
+	@Override
+	public List<DbBaesongVO> getOrderBaesong(String orderIdx) {
+		return dbShopDAO.getOrderBaesong(orderIdx);
+	}
+
+	@Override
+	public List<DbProductVO> getMyOrderList(int startIndexNo, int pageSize, String mid) {
+		return dbShopDAO.getMyOrderList(startIndexNo, pageSize, mid);
 	}
 	
 	

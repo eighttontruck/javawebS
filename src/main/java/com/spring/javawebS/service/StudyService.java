@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.spring.javawebS.vo.KakaoAddressVO;
 import com.spring.javawebS.vo.MemberVO;
 import com.spring.javawebS.vo.QrCodeVO;
+import com.spring.javawebS.vo.TransactionVO;
 import com.spring.javawebS.vo.UserVO;
 
 public interface StudyService {
@@ -47,5 +48,13 @@ public interface StudyService {
 	public QrCodeVO getQrCodeSearch(String qrCode);
 
 	public int thumbnailCreate(MultipartFile file);
+
+	public void setTransactionUserInput1(TransactionVO vo);
+
+	public void setTransactionUserInput2(TransactionVO vo);
+
+	public void setTransactionUserInput(TransactionVO vo);
+
+	public List<TransactionVO> setTransactionUserList(String userSelect);
 
 }

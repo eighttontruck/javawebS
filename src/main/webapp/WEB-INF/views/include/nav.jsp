@@ -33,6 +33,8 @@
 	        <a href="${ctp}/study/qrCode/qrCodeForm" class="w3-bar-item w3-button">QR Code연습</a>
 	        <a href="${ctp}/study/captcha/captchaForm" class="w3-bar-item w3-button">캡차 연습</a>
 	        <a href="${ctp}/study/thumbnail/thumbnailForm" class="w3-bar-item w3-button">썸네일 연습</a>
+	        <a href="${ctp}/errorPage/errorMain" class="w3-bar-item w3-button">error 연습</a>
+	        <a href="${ctp}/study/transaction/transaction" class="w3-bar-item w3-button">트랜잭션 연습</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">
@@ -41,7 +43,7 @@
 	        <a href="${ctp}/dbShop/dbProductList" class="w3-bar-item w3-button">상품리스트</a>
 	        <a href="${ctp}/dbShop/dbCartList" class="w3-bar-item w3-button">장바구니</a>
 	        <a href="${ctp}/dbShop/dbMyOrder" class="w3-bar-item w3-button">주문(배송)현황</a>
-	        <a href="${ctp}/study/merchant" class="w3-bar-item w3-button">결재연습</a>
+	        <a href="${ctp}/study/merchant/merchant" class="w3-bar-item w3-button">결재연습</a>
 	        <a href="${ctp}/" class="w3-bar-item w3-button">QnA</a>
 	        <a href="${ctp}/" class="w3-bar-item w3-button">1:1문의</a>
 	      </div>

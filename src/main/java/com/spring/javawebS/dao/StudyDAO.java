@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.spring.javawebS.vo.KakaoAddressVO;
 import com.spring.javawebS.vo.MemberVO;
 import com.spring.javawebS.vo.QrCodeVO;
+import com.spring.javawebS.vo.TransactionVO;
 import com.spring.javawebS.vo.UserVO;
 
 public interface StudyDAO {
@@ -33,5 +34,13 @@ public interface StudyDAO {
 	public void setQrCreateDB(@Param("vo") QrCodeVO vo);
 
 	public QrCodeVO getQrCodeSearch(@Param("qrCode") String qrCode);
+
+	public void setTransactionUserInput1(@Param("vo") TransactionVO vo);
+
+	public void setTransactionUserInput2(@Param("vo") TransactionVO vo);
+
+	public void setTransactionUserInput(@Param("vo") TransactionVO vo);
+
+	public List<TransactionVO> setTransactionUserList(@Param("userSelect") String userSelect);
 
 }

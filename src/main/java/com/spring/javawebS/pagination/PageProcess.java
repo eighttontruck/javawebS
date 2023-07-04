@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.javawebS.dao.BoardDAO;
+import com.spring.javawebS.dao.DbShopDAO;
 import com.spring.javawebS.dao.GuestDAO;
 import com.spring.javawebS.dao.MemberDAO;
 import com.spring.javawebS.dao.PdsDAO;
@@ -23,6 +24,9 @@ public class PageProcess {
 	@Autowired
 	PdsDAO pdsDAO;
 	
+	@Autowired
+	DbShopDAO dbShopDAO;
+	
 	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) {
 		PageVO pageVO = new PageVO();
 		
@@ -39,6 +43,10 @@ public class PageProcess {
 			}
 		}
 		else if(section.equals("pds"))	totRecCnt = pdsDAO.totRecCnt(part);
+		else if(section.equals("dbMyOrder")) {
+			String mid = part;
+			totRecCnt = dbShopDAO.totRecCnt(mid);
+		}
 		
 		int totPage = (totRecCnt % pageSize)==0 ? totRecCnt /pageSize : (totRecCnt / pageSize) + 1;
 		int startIndexNo = (pag - 1) * pageSize;

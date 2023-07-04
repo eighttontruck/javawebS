@@ -235,6 +235,18 @@ public class MessageController {
 			model.addAttribute("msg", "장바구니가 비어있습니다.");
 			model.addAttribute("url", "/dbShop/dbProductList");
 		}
+		else if(msgFlag.equals("paymentResultOk")) {
+			model.addAttribute("msg", "결제가 정상적으로 완료되었습니다.");
+			model.addAttribute("url", "/dbShop/paymentResultOk");
+		}
+		else if(msgFlag.equals("transactionInput1Ok")) {
+			model.addAttribute("msg", "개별 회원 처리가 성공적으로 수행되었습니다.");
+			model.addAttribute("url", "/study/transaction/transactionList");
+		}
+		else if(msgFlag.equals("transactionInput2Ok")) {
+			model.addAttribute("msg", "회원 일괄 처리가 성공적으로 수행되었습니다.");
+			model.addAttribute("url", "/study/transaction/transactionList");
+		}
 		
 		
 		return "include/message";

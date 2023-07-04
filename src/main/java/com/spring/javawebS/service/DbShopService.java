@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.spring.javawebS.vo.DbBaesongVO;
 import com.spring.javawebS.vo.DbCartVO;
 import com.spring.javawebS.vo.DbOptionVO;
 import com.spring.javawebS.vo.DbOrderVO;
@@ -73,8 +74,20 @@ public interface DbShopService {
 
 	public void dbCartDelete(int idx);
 
-	public DbCartVO getCartIdx(int parseInt);
+	public DbCartVO getCartIdx(int idx);
 
 	public DbOrderVO getOrderMaxIdx();
+
+	public void setDbOrder(DbOrderVO vo);
+
+	public void setDbCartDeleteAll(int idx);
+
+	public void setDbBaesong(DbBaesongVO baesongVO);
+
+	public void setMemberPointPlus(int point, String mid);
+
+	public List<DbBaesongVO> getOrderBaesong(String orderIdx);
+
+	public List<DbProductVO> getMyOrderList(int startIndexNo, int pageSize, String mid);
 
 }

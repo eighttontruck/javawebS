@@ -73,7 +73,7 @@
 	    
 	  <!-- 주문서 목록출력 -->
 	  <c:set var="orderTotalPrice" value="0"/>
-	  <c:forEach var="vo" items="${sOrderVos}">  <!-- 세션에 담아놓은 sOrderVos의 품목내역들을 화면에 각각 보여주는 작업처리 -->
+	  <c:forEach var="vo" items="${sOrderVOS}">  <!-- 세션에 담아놓은 sOrderVos의 품목내역들을 화면에 각각 보여주는 작업처리 -->
 	    <tr align="center">
 	      <td><img src="${ctp}/dbShop/product/${vo.thumbImg}" width="150px"/></td>
 	      <td align="left">
@@ -103,8 +103,8 @@
 	<table style="margin:auto; width:90%"><tr><td>
   <div style="padding:8px; background-color:#eee;text-align:center;">
     총 주문(결재) 금액 : 상품가격(<fmt:formatNumber value="${orderTotalPrice}" pattern='#,###원'/>) +
-                    배송비(<fmt:formatNumber value="${sOrderVos[0].baesong}" pattern='#,###원'/>) =
-                    총 <font size="4" color="orange"><b><fmt:formatNumber value="${orderTotalPrice + sOrderVos[0].baesong}" pattern='#,###'/></b></font>원
+                    배송비(<fmt:formatNumber value="${sOrderVOS[0].baesong}" pattern='#,###원'/>) =
+                    총 <font size="4" color="orange"><b><fmt:formatNumber value="${orderTotalPrice + sOrderVOS[0].baesong}" pattern='#,###'/></b></font>원
   </div>
   </td></tr></table>
 	<p><br/></p>
@@ -137,7 +137,14 @@
 			</tr>
 	    <tr>
 			  <th>배송시요청사항</th>
-			  <td><input type="text" name="message" class="form-control" placeholder="배송시요청사항을 기록하세요"/></td>
+			  <td><!-- <input type="text" name="message" class="form-control" placeholder="배송시요청사항을 기록하세요"/> -->
+			    <select name="message" class="form-control">
+			      <option>부재중 경비실에 맡겨주세요.</option>
+			      <option>빠른 배송부탁합니다.</option>
+			      <option>부재중 현관문 앞에 놓아주세요.</option>
+			      <option>부재중 전달해주지 마세요.</option>
+			    </select>
+			  </td>
 			</tr>
 	    <tr>
 			  <th>처리될 총 결제금액(테스트자료 10원)</th>
@@ -161,26 +168,26 @@
 	      <p>
 	        <select name="paymentCard" id="paymentCard">
 	          <option value="">카드선택</option>
-	          <option value="국민">국민</option>
-	          <option value="현대">현대</option>
-	          <option value="신한">신한</option>
-	          <option value="농협">농협</option>
-	          <option value="BC">BC</option>
-	          <option value="롯데">롯데</option>
-	          <option value="삼성">삼성</option>
-	          <option value="LG">LG</option>
+	          <option>국민카드</option>
+	          <option>현대카드</option>
+	          <option>신한카드</option>
+	          <option>농협카드</option>
+	          <option>BC카드</option>
+	          <option>롯데카드</option>
+	          <option>삼성카드</option>
+	          <option>LG카드</option>
 	        </select>
 	      </p>
 				<p>카드번호 : <input type="text" name="payMethodCard" id="payMethodCard"/></p>
 	    </div>
 	    <div id="bank" class="container tab-pane fade"><br>
-	      <h3>은행결재</h3>
+	      <h3>은행결재(무통장입금)</h3>
 	      <p>
 	        <select name="paymentBank" id="paymentBank">
 	          <option value="">은행선택</option>
-	          <option value="국민">국민(111-111-111)</option>
-	          <option value="신한">신한(222-222-222)</option>
-	          <option value="우리">우리(333-333-333)</option>
+	          <option value="국민은행">국민(111-111-111)</option>
+	          <option value="신한은행">신한(222-222-222)</option>
+	          <option value="우리은행">우리(333-333-333)</option>
 	          <option value="농협">농협(444-444-444)</option>
 	          <option value="신협">신협(555-555-555)</option>
 	        </select>
