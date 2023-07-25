@@ -110,7 +110,6 @@
         <th>파일형식</th>
         <th>비고</th>
       </tr>
-      
       <c:forEach var="file" items="${files}" varStatus="st">
         <tr>
           <td>${st.count}</td>

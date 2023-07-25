@@ -18,7 +18,10 @@
   <hr/>
   <div>
     <p><font color="blue"><b>${sNickName}</b></font>님 로그인 중이십니다.</p>
-    <p>회원님의 현재 등급은 <font color="orange">${strLevel}</font>입니다.</p>
+    <%-- <p>회원님의 현재 등급은 <font color="orange">${strLevel}</font>입니다.</p> --%>
+	  <c:set var='login' value='${empty sLogin ? "일반계정" : sLogin}'/>
+	  <p>회원님은 <font color='orange'>${login}</font> (으)로 로그인 하셨군요.</p>
+	  <p>현재 <font color="blue"><b>${sStrLevel}</b></font> 등급 이십니다.</p>
     <!-- 회원의 기본정보들을 출력시켜준다.(포인트... 방문횟수, .....등등...) -->
   </div>
   <c:if test="${!empty sImsiPwd}">

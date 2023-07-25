@@ -137,9 +137,80 @@
     </if>
   </select>
   
+  <select id="totRecCntMyOrderStatus" resultType="int">
+    <if test="mid == '전체'">
+      SELECT count(*) from dbOrder;
+    </if>
+    <if test="mid != '전체' and conditionOrderStatus == '전체'">
+        SELECT count(*)
+        from dbOrder a join dbBaesong b using(orderIdx) 
+        <![CDATA[ where b.mid=#{mid} and date(orderDate) >= date(#{startJumun}) and date(orderDate) <= date(#{endJumun}) order by orderDate desc ]]>;
+    </if>
+    <if test="mid != '전체' and conditionOrderStatus != '전체'">
+        SELECT count(*)
+        from dbOrder a join dbBaesong b using(orderIdx) 
+        <![CDATA[ where b.mid=#{mid} and date(orderDate) >= date(#{startJumun}) and date(orderDate) <= date(#{endJumun}) and b.orderStatus=#{conditionOrderStatus} order by orderDate desc ]]>;
+    </if>
+  </select>
   
-	
-	
+  <select id="totRecCntMyOrderCondition" resultType="int">
+    SELECT count(*) FROM dbOrder a JOIN dbBaesong b USING(orderIdx)
+	    <![CDATA[ WHERE b.mid=#{mid} AND now() <= date(date_add(orderDate, interval #{conditionDate} day)) ]]>
+  </select>
+  
+  <select id="getOrderCondition" resultType="com.spring.javawebS.vo.DbBaesongVO">
+    <!-- 
+    SELECT a.*,b.* 
+    FROM dbOrder a join dbBaesong b using(orderIdx) 
+    <![CDATA[ WHERE b.mid=#{mid} and date(orderDate) >= date(subdate(now(), INTERVAL #{conditionDate} DAY)) and date(orderDate) <= date(now()) ]]> 
+    order by orderDate desc
+    limit #{startIndexNo},#{pageSize};
+     -->
+    SELECT a.*,b.* 
+	    FROM dbOrder a JOIN dbBaesong b USING(orderIdx) 
+	    <![CDATA[ WHERE b.mid=#{mid} AND now() <= date(date_add(orderDate, interval #{conditionDate} day)) ]]>
+	    ORDER BY orderDate DESC limit #{startIndexNo},#{pageSize};
+  </select>
+  
+  <select id="totRecCntAdminStatus" resultType="int">
+    <if test="orderStatus == '전체'">
+      select count(*) from dbOrder a join dbBaesong b using(orderIdx) <![CDATA[ where date(orderDate) >= date(#{startJumun}) and date(orderDate) <= date(#{endJumun}) order by orderDate desc ]]>;
+    </if>
+    <if test="orderStatus != '전체'">
+      select count(*) from dbOrder a join dbBaesong b using(orderIdx) <![CDATA[ where date(orderDate) >= date(#{startJumun}) and date(orderDate) <= date(#{endJumun}) and b.orderStatus=#{orderStatus} order by orderDate desc ]]>;
+    </if>
+  </select>
+  
+  <select id="getAdminOrderStatus" resultType="com.spring.javawebS.vo.DbBaesongVO">
+    <if test='orderStatus == "전체"'>
+      select a.*,b.* from dbOrder a join dbBaesong b using(orderIdx) <![CDATA[ where date(orderDate) >= date(#{startJumun}) and date(orderDate) <= date(#{endJumun}) order by orderDate desc ]]> limit #{startIndexNo},#{pageSize};
+    </if>
+    <if test='orderStatus != "전체"'>
+      select a.*,b.* from dbOrder a join dbBaesong b using(orderIdx) <![CDATA[ where date(orderDate) >= date(#{startJumun}) and date(orderDate) <= date(#{endJumun}) and b.orderStatus=#{orderStatus} order by orderDate desc ]]> limit #{startIndexNo},#{pageSize};
+    </if>
+  </select>
+  
+  <select id="getMainImageSearch" resultType="com.spring.javawebS.vo.MainImageVO">
+    <if test='productCode == ""'>
+	    <!-- select * from mainImage order by idx desc limit 4; -->
+	    select m.*,p.productName from mainImage m join dbProduct p using(productCode) order by idx desc limit 4;
+    </if>
+    <if test='productCode != ""'>
+	    <!-- select * from mainImage where productCode = #{productCode}; -->
+	    select m.*,p.productName from mainImage m join dbProduct p using(productCode) where productCode = #{productCode};
+    </if>
+  </select>
+  
+  <select id="getMainImageList" resultType="com.spring.javawebS.vo.MainImageVO">
+    select m.*,p.productName from mainImage m join dbProduct p using(productCode) group by productCode order by idx desc;
+  </select>
+  
+  <select id="getTotalBaesongOrder" resultType="int">
+    select orderTotalPrice from dbBaesong where orderIdx = #{orderIdx};
+  </select>
+  
+  
+  
 	<insert id="setCategoryMainInput">
 	  insert into categoryMain values (#{vo.categoryMainCode},#{vo.categoryMainName});
 	</insert>
@@ -172,6 +243,10 @@
     insert into dbBaesong values (default,#{baesongVO.oIdx},#{baesongVO.orderIdx},#{baesongVO.orderTotalPrice},#{baesongVO.mid},#{baesongVO.name},#{baesongVO.address},#{baesongVO.tel},#{baesongVO.message},#{baesongVO.payment},#{baesongVO.payMethod},default);
   </insert>
   
+  <insert id="mainImageInput">
+    insert into mainImage values (default, #{vo.productCode}, #{vo.mainFName});
+  </insert>
+  
   
   
   
@@ -182,9 +257,11 @@
   <update id="setMemberPointPlus">
     update member2 set point = point + #{point} where mid = #{mid};
   </update>
+  
+  <update id="setOrderStatusUpdate">
+    update dbBaesong set orderStatus = #{orderStatus} where orderIdx = #{orderIdx};
+  </update>
 
-  
-  
   
   
   <delete id="setCategoryMainDelete">
@@ -211,5 +288,8 @@
     delete from dbCart where idx = #{idx};
   </delete>
   
+  <delete id="mainImageDelete">
+    delete from mainImage where productCode = #{productCode};
+  </delete>
 	
 </mapper>

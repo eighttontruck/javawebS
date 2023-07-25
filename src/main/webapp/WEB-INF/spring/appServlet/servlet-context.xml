@@ -4,7 +4,9 @@
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
@@ -26,6 +28,7 @@
 	<resources mapping="/data/**" location="/resources/data/" />
 	<resources mapping="/pds/**" location="/resources/data/pds/" />
 	<resources mapping="/dbShop/**" location="/resources/data/dbShop/" />
+	<resources mapping="/inquiry/**" location="/resources/data/inquiry/" />
 
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
@@ -59,11 +62,13 @@
 	<interceptors>
 	  <interceptor>
 	    <mapping path="/admin/**"/>
-	    <beans:ref bean="level0Interceptor" />
+	    <beans:ref bean="level0Interceptor" />		<!-- level0 : 관리자 -->
 	  </interceptor>
 	  <interceptor>
 	    <mapping path="/member/**"/>
+	    <mapping path="/qna/**"/>
 	    <mapping path="/board/boardList" />
+	    <mapping path="/webSocket/**"/>
 	    <exclude-mapping path="/member/memberLogin" />
 	    <exclude-mapping path="/member/memberLogout" />
 	    <exclude-mapping path="/member/memberJoin" />
@@ -71,25 +76,32 @@
 	    <exclude-mapping path="/member/memberNickCheck" />
 	    <exclude-mapping path="/member/memberIdFind" />
 	    <exclude-mapping path="/member/memberPwdFind" />
-	    <beans:ref bean="level3Interceptor" />
+	    <exclude-mapping path="/member/memberKakaoLogin" />
+	    <beans:ref bean="level3Interceptor" />				<!-- level3 : 준회원 -->
 	  </interceptor>
 	  <interceptor>
 	    <mapping path="/study/**"/>
 	    <mapping path="/board/**"/>
+	    <mapping path="/dbShop/**"/>
+			<mapping path="/inquiry/**"/>
 	    <mapping path="/pds/pdsList"/>
 	    <mapping path="/pds/pdsDownload"/>
 	    <exclude-mapping path="/board/boardList" />
-	    <beans:ref bean="level2Interceptor" />
+	    <beans:ref bean="level2Interceptor" />			<!-- 정회원 -->
 	  </interceptor>
 	  <interceptor>
 	    <mapping path="/pds/**"/>
 	    <exclude-mapping path="/pds/pdsList" />
 	    <exclude-mapping path="/pds/pdsDownload" />
-	    <beans:ref bean="level1Interceptor" />
+	    <beans:ref bean="level1Interceptor" />			<!-- 우수회원 -->
 	  </interceptor>
 	</interceptors>
 	
 	<!-- 트래잭션을 어노테이션으로 처리하기위해 참조하는 클래스를 등록시켜준다. -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 스프링 스케줄러 -->
+	<task:scheduler id="jobScheduler" pool-size="10" />
+	<task:annotation-driven scheduler="jobScheduler" />
 	
 </beans:beans>

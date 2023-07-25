@@ -9,6 +9,7 @@ import com.spring.javawebS.vo.DbCartVO;
 import com.spring.javawebS.vo.DbOptionVO;
 import com.spring.javawebS.vo.DbOrderVO;
 import com.spring.javawebS.vo.DbProductVO;
+import com.spring.javawebS.vo.MainImageVO;
 
 public interface DbShopDAO {
 
@@ -90,8 +91,32 @@ public interface DbShopDAO {
 
 	public List<DbBaesongVO> getOrderBaesong(@Param("orderIdx") String orderIdx);
 
-	public List<DbProductVO> getMyOrderList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("mid") String mid);
+	public List<DbBaesongVO> getMyOrderList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("mid") String mid);
 
 	public int totRecCnt(@Param("mid") String mid);
+
+	public int totRecCntMyOrderStatus(@Param("mid") String mid, @Param("startJumun") String startJumun, @Param("endJumun") String endJumun, @Param("conditionOrderStatus") String conditionOrderStatus);
+
+	public List<DbBaesongVO> getMyOrderStatus(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("mid") String mid, @Param("startJumun") String startJumun, @Param("endJumun") String endJumun, @Param("conditionOrderStatus") String conditionOrderStatus);
+
+	public List<DbBaesongVO> getOrderCondition(@Param("mid") String mid, @Param("conditionDate") int conditionDate, @Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize);
+
+	public int totRecCntAdminStatus(@Param("startJumun") String startJumun, @Param("endJumun") String endJumun, @Param("orderStatus") String orderStatus);
+
+	public int totRecCntMyOrderCondition(@Param("mid") String mid, @Param("conditionDate") int conditionDate);
+	
+	public List<DbBaesongVO> getAdminOrderStatus(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("startJumun") String startJumun, @Param("endJumun") String endJumun, @Param("orderStatus") String orderStatus);
+
+	public void setOrderStatusUpdate(@Param("orderIdx") String orderIdx, @Param("orderStatus") String orderStatus);
+
+	public List<MainImageVO> getMainImageSearch(@Param("productCode") String productCode);
+
+	public List<MainImageVO> getMainImageList();
+
+	public int mainImageInput(@Param("vo") MainImageVO vo);
+
+	public int mainImageDelete(@Param("productCode") String productCode);
+
+	public int getTotalBaesongOrder(@Param("orderIdx") String orderIdx);
 
 }

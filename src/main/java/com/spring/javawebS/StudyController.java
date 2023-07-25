@@ -47,6 +47,7 @@ import com.spring.javawebS.common.ARIAUtil;
 import com.spring.javawebS.common.SecurityUtil;
 import com.spring.javawebS.service.MemberService;
 import com.spring.javawebS.service.StudyService;
+import com.spring.javawebS.vo.ChartVO;
 import com.spring.javawebS.vo.DbPayMentVO;
 import com.spring.javawebS.vo.KakaoAddressVO;
 import com.spring.javawebS.vo.MailVO;
@@ -78,6 +79,7 @@ public class StudyController {
 	}
 	
 	// 암호화연습(sha256) : 결과처리
+	@SuppressWarnings("static-access")
 	@ResponseBody
 	@RequestMapping(value = "/password/sha256", method = RequestMethod.POST, produces="application/text; charset=utf8")
 	public String sha256Post(String pwd) {
@@ -238,6 +240,22 @@ public class StudyController {
 		mailSender.send(message);
 		
 		return "redirect:/message/mailSendOk2";
+	}
+	
+	// 메일 연습 폼3
+	@RequestMapping(value = "/mail/mailForm3", method = RequestMethod.GET)
+	public String mailForm3Get() {
+		return "study/mail/mailForm3";
+	}
+	// 메일 연습 폼3 실행처리
+	//@Schedules
+	@RequestMapping(value = "/mail/mailForm3", method = RequestMethod.POST)
+	public String mailForm3Post(MailVO vo) {
+		System.out.println(vo.getToMail());
+		System.out.println(vo.getTitle());
+		System.out.println(vo.getContent());
+		System.out.println("=========================");
+		return "redirect:/study/mail/mailForm3";
 	}
 	
 	@RequestMapping(value = "/uuid/uuidForm", method = RequestMethod.GET)
@@ -783,6 +801,121 @@ public class StudyController {
 		return "study/transaction/transactionList";
 	}
 	
+	// Google Chart 연습
+	@RequestMapping(value="/chart/chart", method=RequestMethod.GET)
+	public String chartGet(Model model,
+			@RequestParam(name="part", defaultValue="barV", required=false) String part) {
+		model.addAttribute("part", part);
+		return "study/chart/chart";
+	}
 	
+	// Google Chart2 연습
+	@RequestMapping(value="/chart2/chart", method=RequestMethod.GET)
+	public String chart2Get(Model model) {
+		return "study/chart2/chart";
+	}
+	
+	// Google Chart2 연습
+	@RequestMapping(value="/chart2/chart2", method=RequestMethod.POST)
+	public String chart2Post(Model model, ChartVO vo) {
+		System.out.println("vo : " + vo);
+		model.addAttribute("vo", vo);
+		return "study/chart2/chart";
+	}
+	
+	// 최근 방문자수 차트로 표시하기
+	@RequestMapping(value="/chart2/chart2Recently", method=RequestMethod.GET)
+	public String googleChart2RecentlyGet(Model model,
+			@RequestParam(name="part", defaultValue="line", required=false) String part) {
+		System.out.println("part : " + part);
+		List<ChartVO> vos = null;
+		if(part.equals("lineChartVisitCount")) {
+			vos = studyService.getRecentlyVisitCount(1);
+			String[] visitDates = new String[7];
+			int[] visitDays = new int[7];	// line차트는 x축과 y축이 모두 숫자가 와야하기에 날짜중에서 '일'만 담기로 한다.(정수타입으로)
+			int[] visitCounts = new int[7];
+			for(int i=0; i<7; i++) {
+				visitDates[i] = vos.get(i).getVisitDate().replaceAll("-", "").substring(4);
+				visitDays[i] = Integer.parseInt(vos.get(i).getVisitDate().toString().substring(8));
+				visitCounts[i] = vos.get(i).getVisitCount();
+			}
+			
+			model.addAttribute("title", "최근 7일간 방문횟수");
+			model.addAttribute("subTitle", "최근 7일동안 방문한 해당일자 방문자 총수를 표시합니다.");
+			model.addAttribute("visitCount", "방문횟수");
+			model.addAttribute("legend", "일일 방문 총횟수");
+			model.addAttribute("topTitle", "방문날짜");
+			model.addAttribute("xTitle", "방문날짜");
+			model.addAttribute("part", part);
+			model.addAttribute("visitDates", visitDates);
+			model.addAttribute("visitDays", visitDays);
+			model.addAttribute("visitCounts", visitCounts);
+		}
+		
+		return "study/chart2/chart";
+	}
+	
+	// 많이찾은 방문자 7명 차트로 표시하기
+	@RequestMapping(value="/chart2/chart2Recently2", method=RequestMethod.GET)
+	public String googleChart2Recently2Get(Model model,
+			@RequestParam(name="part", defaultValue="line", required=false) String part) {
+		List<ChartVO> vos = null;
+		if(part.equals("lineChartVisitCount2")) {
+			vos = studyService.getRecentlyVisitCount(2);
+			String[] visitDates = new String[7];
+			int[] visitDays = new int[7];	// line차트는 x축과 y축이 모두 숫자가 와야하기에 날짜중에서 '일'만 담기로 한다.(정수타입으로)
+			int[] visitCounts = new int[7];
+			for(int i=0; i<7; i++) {
+				visitDates[i] = vos.get(i).getVisitDate().toString();
+				visitDays[i] = 7 - i;
+				visitCounts[i] = vos.get(i).getVisitCount();
+			}
+			
+			model.addAttribute("title", "많이 방문한 회원 7명");
+			model.addAttribute("subTitle", "가장 많이 방문한 방문자 7인을 표시합니다.");
+			model.addAttribute("visitCount", "방문횟수");
+			model.addAttribute("legend", "방문 총횟수");
+			model.addAttribute("topTitle", "회원아이디");
+			model.addAttribute("xTitle", "회원아이디");
+			model.addAttribute("part", part);
+			model.addAttribute("visitDates", visitDates);
+			model.addAttribute("visitDays", visitDays);
+			model.addAttribute("visitCounts", visitCounts);
+		}
+		
+		return "study/chart2/chart";
+	}
+	
+	// 달력내역 가져오기
+	@RequestMapping(value = "/calendar/calendar", method = RequestMethod.GET)
+	public String calendarGet() {
+		studyService.getCalendar();
+		return "study/calendar/calendar";
+	}
+	
+	// /scheduler/quartz 스케줄러 를 이용한 자동 로딩..
+//	@RequestMapping(value = "/scheduler/quartz", method=RequestMethod.GET)
+//	public void quartzGet() {
+//		System.out.println("/scheduler/quartz 실행합니다.");
+//		
+//		SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+//		Scheduler scheduler;
+//		try {
+//			scheduler = schedulerFactory.getScheduler();
+//			JobDetail job = JobBuilder.newJob(TimeTask.class)
+//					.withIdentity("time", Scheduler.DEFAULT_GROUP)
+//					.build();
+//			Trigger trigger = TriggerBuilder.newTrigger()
+//					.withIdentity("timetrigger", Scheduler.DEFAULT_GROUP)
+//					.withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))
+//					.build();
+//			scheduler.scheduleJob(job, trigger);
+//			scheduler.start();
+//		} catch (SchedulerException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		//return "";
+//	}
 	
 }

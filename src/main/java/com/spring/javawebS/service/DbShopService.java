@@ -3,12 +3,15 @@ package com.spring.javawebS.service;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javawebS.vo.DbBaesongVO;
 import com.spring.javawebS.vo.DbCartVO;
 import com.spring.javawebS.vo.DbOptionVO;
 import com.spring.javawebS.vo.DbOrderVO;
 import com.spring.javawebS.vo.DbProductVO;
+import com.spring.javawebS.vo.MainImageVO;
+import com.spring.javawebS.vo.MemberVO;
 
 public interface DbShopService {
 
@@ -88,6 +91,25 @@ public interface DbShopService {
 
 	public List<DbBaesongVO> getOrderBaesong(String orderIdx);
 
-	public List<DbProductVO> getMyOrderList(int startIndexNo, int pageSize, String mid);
+	public List<DbBaesongVO> getMyOrderList(int startIndexNo, int pageSize, String mid);
+
+	public List<DbBaesongVO> getMyOrderStatus(int startIndexNo, int pageSize, String mid, String startJumun, String endJumun, String conditionOrderStatus);
+
+	public List<DbBaesongVO> getOrderCondition(String mid, int conditionDate, int startIndexNo, int pageSize);
+	
+	public List<DbBaesongVO> getAdminOrderStatus(int startIndexNo, int pageSize, String startJumun, String endJumun, String orderStatus);
+
+	public void setOrderStatusUpdate(String orderIdx, String orderStatus);
+
+	public List<MainImageVO> getMainImageSearch(String productCode);
+
+	public List<MainImageVO> getMainImageList();
+
+	public int mainImageInput(MainImageVO vo, MultipartHttpServletRequest fName);
+
+	public int mainImageDelete(String productCode);
+
+	public int getTotalBaesongOrder(String orderIdx);
+
 
 }

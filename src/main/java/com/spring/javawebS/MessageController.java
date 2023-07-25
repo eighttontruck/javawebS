@@ -79,6 +79,10 @@ public class MessageController {
 			model.addAttribute("msg", mid + "로그인 실패~~");
 			model.addAttribute("url", "/member/memberLogin");
 		}
+		else if(msgFlag.equals("midSameSearch")) {
+			model.addAttribute("msg", "같은 아이디가 존재합니다.....");
+			model.addAttribute("url", "/member/memberLogin");
+		}
 		else if(msgFlag.equals("memberLogout")) {
 			model.addAttribute("msg", mid + "로그아웃 되었습니다.");
 			model.addAttribute("url", "/member/memberLogin");
@@ -246,6 +250,42 @@ public class MessageController {
 		else if(msgFlag.equals("transactionInput2Ok")) {
 			model.addAttribute("msg", "회원 일괄 처리가 성공적으로 수행되었습니다.");
 			model.addAttribute("url", "/study/transaction/transactionList");
+		}
+		else if(msgFlag.equals("mainImageInputOk")) {
+			model.addAttribute("msg", "메인이미지가 등록되었습니다.");
+			model.addAttribute("url", "/dbShop/mainImageList");
+		}
+		else if(msgFlag.equals("mainImageInputNo")) {
+			model.addAttribute("msg", "메인이미지 등록 실패~~");
+			model.addAttribute("url", "/dbShop/mainImageInput");
+		}
+		else if(msgFlag.equals("inquiryInputOk")) {
+			model.addAttribute("msg", "1:1 문의사항이 등록되었습니다.");
+			model.addAttribute("url", "/inquiry/inquiryList");
+		}
+		else if(msgFlag.equals("inquiryUpdateOk")) {
+			model.addAttribute("msg", "1:1 문의사항이 수정되었습니다.");
+			model.addAttribute("url", "/inquiry/inquiryView?idx="+idx);
+		}
+		else if(msgFlag.equals("inquiryDeleteOk")) {
+			model.addAttribute("msg", "1:1 문의사항이 삭제되었습니다.");
+			model.addAttribute("url", "/inquiry/inquiryList?pag="+pag);
+		}
+		else if(msgFlag.equals("adInquiryDeleteOk")) {
+			model.addAttribute("msg", "1:1 문의글과 답변글이 삭제되었습니다.");
+			model.addAttribute("url", "/admin/adInquiryList?pag="+pag);
+		}
+		else if(msgFlag.equals("qnaInputOk")) {
+			model.addAttribute("msg", "QnA에 글이 등록되었습니다.");
+			model.addAttribute("url", "/qna/qnaList");
+		}
+		else if(msgFlag.equals("qnaUpdateOk")) {
+			model.addAttribute("msg", "QnA에 글이 수정되었습니다.");
+			model.addAttribute("url", "/qna/qnaList");
+		}
+		else if(msgFlag.equals("qnaDelete")) {
+			model.addAttribute("msg", "QnA에 글이 삭제되었습니다.");
+			model.addAttribute("url", "/qna/qnaList");
 		}
 		
 		

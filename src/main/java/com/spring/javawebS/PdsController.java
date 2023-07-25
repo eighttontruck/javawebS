@@ -66,9 +66,9 @@ public class PdsController {
 	public String pdsInputPost(PdsVO vo, MultipartHttpServletRequest file) {
 		String pwd = passwordEncoder.encode(vo.getPwd());
 		vo.setPwd(pwd);
-		System.out.println("vo : " + vo);
+		//System.out.println("vo : " + vo);
 		int res = pdsService.setPdsInput(vo, file);
-		System.out.println("res : " + res);
+		//System.out.println("res : " + res);
 		
 		if(res == 1) return "redirect:/message/pdsInputOk";
 		else return "redirect:/message/pdsInputNo";

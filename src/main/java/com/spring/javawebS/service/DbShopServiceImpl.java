@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javawebS.dao.DbShopDAO;
 import com.spring.javawebS.vo.DbBaesongVO;
@@ -23,6 +24,7 @@ import com.spring.javawebS.vo.DbCartVO;
 import com.spring.javawebS.vo.DbOptionVO;
 import com.spring.javawebS.vo.DbOrderVO;
 import com.spring.javawebS.vo.DbProductVO;
+import com.spring.javawebS.vo.MainImageVO;
 
 @Service
 public class DbShopServiceImpl implements DbShopService {
@@ -100,7 +102,7 @@ public class DbShopServiceImpl implements DbShopService {
 				Date date = new Date();
 				SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
 			  String saveFileName = sdf.format(date) + "_" + originalFilename;
-				writeFile(file, saveFileName);	  // 메일 이미지를 서버에 업로드 시켜주는 메소드 호출
+				writeFile(file, saveFileName, "product");	  // 메일 이미지를 서버에 업로드 시켜주는 메소드 호출
 				vo.setFSName(saveFileName);				// 서버에 저장된 파일명을 vo에 set시켜준다.
 			}
 			else {
@@ -180,13 +182,19 @@ public class DbShopServiceImpl implements DbShopService {
 	}
 	
 	// 메인 상품 이미지 서버에 저장하기
-	private void writeFile(MultipartFile fName, String saveFileName) throws IOException {
+	private void writeFile(MultipartFile fName, String saveFileName, String flag) throws IOException {
 		byte[] data = fName.getBytes();
 		
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/data/dbShop/product/");
+		String readPath = "";
+		if(flag.equals("product")) {
+			readPath = request.getSession().getServletContext().getRealPath("/resources/data/dbShop/product/");
+		}
+		else if(flag.equals("mainImage")) {
+			readPath = request.getSession().getServletContext().getRealPath("/resources/data/dbShop/mainImage/");
+		}
 		
-		FileOutputStream fos = new FileOutputStream(uploadPath + saveFileName);
+		FileOutputStream fos = new FileOutputStream(readPath + saveFileName);
 		fos.write(data);
 		fos.close();
 	}
@@ -317,9 +325,86 @@ public class DbShopServiceImpl implements DbShopService {
 	}
 
 	@Override
-	public List<DbProductVO> getMyOrderList(int startIndexNo, int pageSize, String mid) {
+	public List<DbBaesongVO> getMyOrderList(int startIndexNo, int pageSize, String mid) {
 		return dbShopDAO.getMyOrderList(startIndexNo, pageSize, mid);
 	}
+
+	@Override
+	public List<DbBaesongVO> getMyOrderStatus(int startIndexNo, int pageSize, String mid, String startJumun, String endJumun, String conditionOrderStatus) {
+		return dbShopDAO.getMyOrderStatus(startIndexNo, pageSize, mid, startJumun, endJumun, conditionOrderStatus);
+	}
+
+	@Override
+	public List<DbBaesongVO> getOrderCondition(String mid, int conditionDate, int startIndexNo, int pageSize) {
+		return dbShopDAO.getOrderCondition(mid, conditionDate, startIndexNo, pageSize);
+	}
 	
+	@Override
+	public List<DbBaesongVO> getAdminOrderStatus(int startIndexNo, int pageSize, String startJumun, String endJumun, String orderStatus) {
+		return dbShopDAO.getAdminOrderStatus(startIndexNo, pageSize, startJumun, endJumun, orderStatus);
+	}
+
+	@Override
+	public void setOrderStatusUpdate(String orderIdx, String orderStatus) {
+		dbShopDAO.setOrderStatusUpdate(orderIdx, orderStatus);
+	}
+
+	@Override
+	public List<MainImageVO> getMainImageSearch(String productCode) {
+		return dbShopDAO.getMainImageSearch(productCode);
+	}
+
+	@Override
+	public List<MainImageVO> getMainImageList() {
+		return dbShopDAO.getMainImageList();
+	}
+
+	@Override
+	public int mainImageInput(MainImageVO vo, MultipartHttpServletRequest fName) {
+		int res = 0;
+		try {
+			List<MultipartFile> fileList = fName.getFiles("file");
+			for(MultipartFile file : fileList) {
+				String oFileName = file.getOriginalFilename();
+				String sFileName = saveFileName(oFileName);
+				System.out.println("oFileName : " + oFileName);
+				// 파일을 서버에 저장처리...
+				writeFile(file, sFileName, "mainImage");
+				
+				// 여러개의 파일을 DB에 각각의 레코드로 저장처리
+				vo.setMainFName(sFileName);
+				res = dbShopDAO.mainImageInput(vo);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	// 화일명 중복방지를 위한 저장파일명 만들기
+	private String saveFileName(String oFileName) {
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
+	  String saveFileName = sdf.format(date) + "_" + oFileName;
+		
+		return saveFileName;
+	}
+
+	@Override
+	public int mainImageDelete(String productCode) {
+		List<MainImageVO> vos = dbShopDAO.getMainImageSearch(productCode);
+		for(MainImageVO vo : vos) {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+			String realPath = request.getSession().getServletContext().getRealPath("/resources/data/dbShop/mainImage/");
+			
+			new File(realPath + vo.getMainFName()).delete();		// 서버에서 파일들을 삭제한다.
+		}		
+		return dbShopDAO.mainImageDelete(productCode);
+	}
+
+	@Override
+	public int getTotalBaesongOrder(String orderIdx) {
+		return dbShopDAO.getTotalBaesongOrder(orderIdx);
+	}
 	
 }

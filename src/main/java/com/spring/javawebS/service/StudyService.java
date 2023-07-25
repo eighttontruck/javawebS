@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.spring.javawebS.vo.ChartVO;
 import com.spring.javawebS.vo.KakaoAddressVO;
 import com.spring.javawebS.vo.MemberVO;
 import com.spring.javawebS.vo.QrCodeVO;
@@ -56,5 +57,9 @@ public interface StudyService {
 	public void setTransactionUserInput(TransactionVO vo);
 
 	public List<TransactionVO> setTransactionUserList(String userSelect);
+
+	public List<ChartVO> getRecentlyVisitCount(int i);
+
+	public void getCalendar();
 
 }

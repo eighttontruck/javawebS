@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.spring.javawebS.vo.ChartVO;
 import com.spring.javawebS.vo.KakaoAddressVO;
 import com.spring.javawebS.vo.MemberVO;
 import com.spring.javawebS.vo.QrCodeVO;
@@ -42,5 +43,7 @@ public interface StudyDAO {
 	public void setTransactionUserInput(@Param("vo") TransactionVO vo);
 
 	public List<TransactionVO> setTransactionUserList(@Param("userSelect") String userSelect);
+
+	public List<ChartVO> getRecentlyVisitCount(@Param("i") int i);
 
 }

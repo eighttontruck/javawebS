@@ -11,6 +11,4 @@ public class TransactionVO {
 	private String address;
 	private String nickName;
 	private String job;
-	
-	private String flag;
 }

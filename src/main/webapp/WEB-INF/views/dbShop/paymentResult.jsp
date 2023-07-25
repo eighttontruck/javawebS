@@ -72,7 +72,12 @@
     </c:forEach>
   </table>
   <hr/>
-  <p class="text-center"><a href="${ctp}/dbShop/dbProductList" class="btn btn-success">계속쇼핑하기</a> &nbsp;
+  <div class="text-center">
+    구매한 상품 총 금액(배송비포함) : <fmt:formatNumber value="${totalBaesongOrder}"/>원
+  </div>
+  <hr/>
+  <p class="text-center">
+    <a href="${ctp}/dbShop/dbProductList" class="btn btn-success">계속쇼핑하기</a> &nbsp;
     <a href="${ctp}/dbShop/dbMyOrder" class="btn btn-primary">구매내역보기</a>
   </p>
   <hr/>

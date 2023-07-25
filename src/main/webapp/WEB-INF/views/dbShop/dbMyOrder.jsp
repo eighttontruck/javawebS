@@ -95,7 +95,7 @@
       </td>
        --%>
     </tr>
-    <c:if test="${sLevel == 0}">
+    <c:if test="${sLevel == 0}">	<!-- 관리자일때 기간처리... -->
 	    <tr>
 	      <td style="text-align:left;">날짜기간 및 조건검색 :
 	        <c:if test="${startJumun == null}">
@@ -134,7 +134,23 @@
     <tr>
     	<td colspan="4" class="text-center"><c:if test="${productVos.length == 0}">오늘 구매하신 상품이 없습니다.</c:if></td>
     </tr>
-    <c:forEach var="vo" items="${vos}">
+    <c:set var="sw" value="0"/>
+    <c:set var="tempOrderIdx" value="0"/>
+    <c:forEach var="vo" items="${vos}" varStatus="st">
+    	<!-- 같은 주문상품은 한번에 총 금액을 출력처리한다. -->
+      <c:if test="${tempOrderIdx != vo.orderIdx}">
+        <c:if test="${sw != 0}">
+		      <tr class="bg-light">
+		        <td colspan="4" class="p-0">
+		          <div class="text-center m-3">주문번호 : ${tempOrderIdx} / 총 구입금액 : <fmt:formatNumber value="${tempOrderTotalPrice}" />원</div>
+		        </td>
+		      </tr>
+	      </c:if>
+        <c:set var="tempOrderIdx" value="${vo.orderIdx}" />
+        <c:set var="tempOrderTotalPrice" value="${vo.orderTotalPrice}" />
+	      <c:set var="sw" value="1"/>
+      </c:if>
+      
       <tr>
         <td style="text-align:center;">
           <p>주문번호 : ${vo.orderIdx}</p>
@@ -162,8 +178,19 @@
           <c:if test="${vo.orderStatus eq '결제완료'}">(배송준비중)</c:if>
         </td>
       </tr>
-      <tr><td colspan="4" class="p-0"></td></tr>
+      
+      <c:if test="${st.last}">
+        <c:set var="lastOrderTotalPrice" value="${vo.orderTotalPrice}"/>
+        <c:set var="lastOrderIdx" value="${vo.orderIdx}"/>
+      </c:if>
     </c:forEach>
+    
+    <tr class="bg-light">
+      <td colspan="4" class="p-0">
+        <div class="text-center m-3">주문번호 : ${lastOrderIdx} / 총 구입금액 : <fmt:formatNumber value="${lastOrderTotalPrice}" />원</div>
+      </td>
+    </tr>
+    <tr><td colspan="4" class="p-0"></td></tr>
   </table>
   <!-- 블록 페이징처리 시작(BS4 스타일적용) -->
 	<div class="container">
@@ -171,24 +198,24 @@
 			<c:if test="${pageVO.totPage == 0}"><p style="text-align:center"><b>자료가 없습니다.</b></p></c:if>
 			<c:if test="${pageVO.totPage != 0}">
 			  <c:if test="${pageVO.pag != 1}">
-			    <li class="page-item"><a href="${ctp}/dbShop/myOrderStatus?pag=1&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="첫페이지" class="page-link text-secondary">◁◁</a></li>
+			    <li class="page-item"><a href="${ctp}/dbShop/dbMyOrder?pag=1&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="첫페이지" class="page-link text-secondary">◁◁</a></li>
 			  </c:if>
 			  <c:if test="${pageVO.curBlock > 0}">
-			    <li class="page-item"><a href="${ctp}/dbShop/myOrderStatus?pag=${(pageVO.curBlock-1)*pageVO.blockSize + 1}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="이전블록" class="page-link text-secondary">◀</a></li>
+			    <li class="page-item"><a href="${ctp}/dbShop/dbMyOrder?pag=${(pageVO.curBlock-1)*pageVO.blockSize + 1}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="이전블록" class="page-link text-secondary">◀</a></li>
 			  </c:if>
 			  <c:forEach var="i" begin="${(pageVO.curBlock*pageVO.blockSize)+1}" end="${(pageVO.curBlock*pageVO.blockSize)+pageVO.blockSize}">
 			    <c:if test="${i == pageVO.pag && i <= pageVO.totPage}">
-			      <li class="page-item active"><a href='${ctp}/dbShop/myOrderStatus?pag=${i}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}' class="page-link text-light bg-secondary border-secondary">${i}</a></li>
+			      <li class="page-item active"><a href='${ctp}/dbShop/dbMyOrder?pag=${i}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}' class="page-link text-light bg-secondary border-secondary">${i}</a></li>
 			    </c:if>
 			    <c:if test="${i != pageVO.pag && i <= pageVO.totPage}">
-			      <li class="page-item"><a href='${ctp}/dbShop/myOrderStatus?pag=${i}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}' class="page-link text-secondary">${i}</a></li>
+			      <li class="page-item"><a href='${ctp}/dbShop/dbMyOrder?pag=${i}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}' class="page-link text-secondary">${i}</a></li>
 			    </c:if>
 			  </c:forEach>
 			  <c:if test="${pageVO.curBlock < pageVO.lastBlock}">
-			    <li class="page-item"><a href="${ctp}/dbShop/myOrderStatus?pag=${(pageVO.curBlock+1)*pageVO.blockSize + 1}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="다음블록" class="page-link text-secondary">▶</a>
+			    <li class="page-item"><a href="${ctp}/dbShop/dbMyOrder?pag=${(pageVO.curBlock+1)*pageVO.blockSize + 1}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="다음블록" class="page-link text-secondary">▶</a>
 			  </c:if>
 			  <c:if test="${pageVO.pag != pageVO.totPage}">
-			    <li class="page-item"><a href="${ctp}/dbShop/myOrderStatus?pag=${pageVO.totPage}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="마지막페이지" class="page-link" style="color:#555">▷▷</a>
+			    <li class="page-item"><a href="${ctp}/dbShop/dbMyOrder?pag=${pageVO.totPage}&startJumun=${startJumun}&endJumun=${endJumun}&conditionOrderStatus=${conditionOrderStatus}" title="마지막페이지" class="page-link" style="color:#555">▷▷</a>
 			  </c:if>
 			</c:if>
 		</ul>

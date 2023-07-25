@@ -137,3 +137,23 @@ desc dbBaesong;
 drop table dbBaesong;
 delete from dbBaesong;
 select * from dbBaesong;
+
+
+/* 메인 이미지 관리 */
+create table mainImage(
+  idx         int not null auto_increment primary key,	/* 메인 이미지 고유번호 */
+  productCode varchar(20) not null,											/* 어느 품목에 사용될 메인이미지인지 상품의 고유코드를 저장 */
+  mainFName   varchar(50) not null,										/* 서버에 저장될 메인 이미지명 */
+  /* unique key(productCode), */
+  foreign key(productCode) references dbProduct(productCode)
+);
+
+desc mainImage;
+drop table mainImage;
+
+select * from mainImage;
+select * from mainImage group by productCode order by idx desc;
+select m.* from mainImage m, dbProduct p where m.productCode=p.productCode;
+select m.* from mainImage m join dbProduct p using(productCode);
+select m.*,p.productName from mainImage m join dbProduct p using(productCode);
+

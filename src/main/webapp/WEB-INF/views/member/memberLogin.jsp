@@ -8,6 +8,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>memberLogin.jsp</title>
   <jsp:include page="/WEB-INF/views/include/bs4.jsp" />
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>		<!-- 카카오로그인 js파일 -->
+  <script>
+		// 카카로그인을 위한 자바스크립트 키
+		window.Kakao.init("158c673636c9a17a27b67c95f2c6be5c");
+	
+	  // 카카오 로그인
+		function kakaoLogin() {
+			window.Kakao.Auth.login({
+				scope: 'profile_nickname, account_email',
+				success:function(autoObj) {
+					console.log(Kakao.Auth.getAccessToken(),"로그인 OK");
+					console.log(autoObj);
+					window.Kakao.API.request({
+						url : '/v2/user/me',
+						success:function(res) {
+							const kakao_account = res.kakao_account;
+							console.log(kakao_account);
+							//alert(kakao_account.email + " / " + kakao_account.profile.nickname);
+							location.href="${ctp}/member/memberKakaoLogin?nickName="+kakao_account.profile.nickname+"&email="+kakao_account.email;
+						}
+					});
+				}
+			});
+		}
+
+  </script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/nav.jsp" />
@@ -37,6 +63,9 @@
 		    	<button type="button" onclick="location.href='${ctp}/';" class="btn btn-danger mr-1">돌아가기</button>
 		    	<button type="button" onclick="location.href='${ctp}/member/memberJoin';" class="btn btn-success">회원가입</button>
 		    </div>
+		    <div class="text-center mb-3">
+		      <div><a href="javascript:kakaoLogin();"><img src="${ctp}/images/kakao_login_medium_narrow.png" width="150px" /></a></div>			      
+			  </div>	
 		    <div class="row text-center" style="font-size:12px">
 		      <span class="col"><input type="checkbox" name="idSave" checked />아이디 저장</span>
 		      <span class="col">
